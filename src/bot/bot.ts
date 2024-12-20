@@ -1,4 +1,4 @@
-import { Bot, webhookCallback } from "grammy";
+import { Bot } from "grammy"; // Видалили webhookCallback, бо він не використовується
 
 const bot = new Bot(process.env.BOT_TOKEN!);
 

@@ -8,8 +8,10 @@ export const config = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Додаємо базову перевірку
-  const telegramToken = req.headers['x-telegram-bot-api-secret-token'];
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'POST') {
     try {
@@ -22,10 +24,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   }
 
-  // Додаємо тестовий GET endpoint
   if (req.method === 'GET') {
     return res.status(200).json({ status: 'Bot webhook is running' });
   }
 
-  return res.status(405).json({ error: 'Method not allowed' });
+  return res.status(200).end();
 }

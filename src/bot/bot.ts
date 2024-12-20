@@ -1,21 +1,29 @@
-import { Bot } from "grammy";
+import { Bot, webhookCallback } from "grammy";
 
 const bot = new Bot(process.env.BOT_TOKEN!);
 
-// Команда /start
 bot.command("start", async (ctx) => {
-  const webAppUrl = "https://telegram-coin-5gvtbb7i6-vladholomahs-projects.vercel.app"; // Ваш URL з Vercel
+  const webAppUrl = "https://telegram-coin-hev9vjl4q-vladholomahs-projects.vercel.app";
 
-  await ctx.reply("Welcome to Coin App! Click the button below to start:", {
-    reply_markup: {
-      inline_keyboard: [[
-        {
-          text: "🚀 Launch App",
-          web_app: { url: webAppUrl }
-        }
-      ]]
-    }
-  });
+  try {
+    await ctx.reply("Welcome to Coin App! Click the button below to start:", {
+      reply_markup: {
+        inline_keyboard: [[
+          {
+            text: "🚀 Launch App",
+            web_app: { url: webAppUrl }
+          }
+        ]]
+      }
+    });
+    console.log("Start command processed successfully");
+  } catch (error) {
+    console.error("Error processing start command:", error);
+  }
+});
+
+bot.catch((err) => {
+  console.error("Bot error:", err);
 });
 
 export default bot;

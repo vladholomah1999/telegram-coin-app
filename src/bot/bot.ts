@@ -1,25 +1,31 @@
-import { Bot } from "grammy"; // Видалили webhookCallback, бо він не використовується
+import { Bot } from "grammy";
 
-const bot = new Bot(process.env.BOT_TOKEN!);
+const bot = new Bot(process.env.BOT_TOKEN || "");
+
+bot.use(async (ctx, next) => {
+  console.log('Received update:', ctx.update);
+  await next();
+});
 
 bot.command("start", async (ctx) => {
-  const webAppUrl = "https://telegram-coin-hev9vjl4q-vladholomahs-projects.vercel.app";
-
+  console.log("Start command received");
   try {
-    await ctx.reply("Welcome to Coin App! Click the button below to start:", {
+    const webAppUrl = "https://telegram-coin-5gvtbb7i6-vladholomahs-projects.vercel.app";
+    await ctx.reply("🎮 Welcome to Coin App!", {
       reply_markup: {
-        inline_keyboard: [[
-          {
-            text: "🚀 Launch App",
-            web_app: { url: webAppUrl }
-          }
-        ]]
+        inline_keyboard: [
+          [{ text: "🚀 Launch App", web_app: { url: webAppUrl } }]
+        ]
       }
     });
-    console.log("Start command processed successfully");
+    console.log("Reply sent successfully");
   } catch (error) {
-    console.error("Error processing start command:", error);
+    console.error("Error in start command:", error);
   }
+});
+
+bot.on("message", async (ctx) => {
+  console.log("Received message:", ctx.message);
 });
 
 bot.catch((err) => {

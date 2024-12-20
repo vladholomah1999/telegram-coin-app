@@ -1,15 +1,18 @@
-import { Bot, Context } from "grammy";
+import { Bot } from "grammy";
 
-const bot = new Bot<Context>(process.env.BOT_TOKEN!);
+const bot = new Bot(process.env.BOT_TOKEN!);
 
 // Команда /start
 bot.command("start", async (ctx) => {
-  const webAppUrl = "https://your-vercel-url.vercel.app"; // Замінимо на реальний URL після деплою
+  const webAppUrl = "https://telegram-coin-5gvtbb7i6-vladholomahs-projects.vercel.app"; // Ваш URL з Vercel
 
-  await ctx.reply("Welcome! Click the button below to start:", {
+  await ctx.reply("Welcome to Coin App! Click the button below to start:", {
     reply_markup: {
       inline_keyboard: [[
-        { text: "Play Now", web_app: { url: webAppUrl } }
+        {
+          text: "🚀 Launch App",
+          web_app: { url: webAppUrl }
+        }
       ]]
     }
   });

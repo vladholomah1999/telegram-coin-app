@@ -4,40 +4,40 @@ import bot from '../../bot/bot';
 export const config = {
   api: {
     bodyParser: true,
-    externalResolver: true,
   },
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const startTime = new Date().toISOString();
-  console.log(`[${startTime}] Received ${req.method} request to /api/bot`);
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', '*');
 
-  try {
-    if (req.method === 'POST') {
-      console.log('Request body:', JSON.stringify(req.body, null, 2));
+  // Повертаємо OK для OPTIONS запитів (CORS preflight)
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  // Для POST запитів від Telegram
+  if (req.method === 'POST') {
+    try {
+      // Логуємо тіло запиту
+      console.log('Webhook request body:', req.body);
+
+      // Передаємо оновлення боту
       await bot.handleUpdate(req.body);
-      console.log(`[${startTime}] Successfully handled update`);
+
+      // Відповідаємо успіхом
       return res.status(200).json({ ok: true });
+    } catch (error) {
+      // Логуємо помилку
+      console.error('Webhook error:', error);
+      return res.status(200).json({ ok: true }); // Все одно відповідаємо 200 для Telegram
     }
+  }
 
-    if (req.method === 'GET') {
-      return res.status(200).json({
-        status: 'ok',
-        timestamp: startTime,
-        bot: 'active'
-      });
-    }
-
-    console.log(`[${startTime}] Method not allowed: ${req.method}`);
-    return res.status(405).json({
-      error: 'Method not allowed',
-      method: req.method
-    });
-  } catch (error) {
-    console.error(`[${startTime}] Error:`, error);
-    return res.status(500).json({
-      error: String(error),
-      timestamp: startTime
-    });
+  // Для GET запитів повертаємо статус
+  if (req.method === 'GET') {
+    return res.status(200).json({ status: 'ok' });
   }
 }

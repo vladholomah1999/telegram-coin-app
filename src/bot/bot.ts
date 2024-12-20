@@ -1,35 +1,46 @@
 import { Bot } from "grammy";
 
-const bot = new Bot(process.env.BOT_TOKEN || "");
+if (!process.env.BOT_TOKEN) {
+  throw new Error("BOT_TOKEN is not defined");
+}
 
+const bot = new Bot(process.env.BOT_TOKEN);
+
+// Додаємо логування всіх оновлень
 bot.use(async (ctx, next) => {
-  console.log('Received update:', ctx.update);
+  const updateTime = new Date().toISOString();
+  console.log(`[${updateTime}] Received update:`, JSON.stringify(ctx.update, null, 2));
   await next();
+  console.log(`[${updateTime}] Handled update`);
 });
 
+// Обробник команди /start
 bot.command("start", async (ctx) => {
-  console.log("Start command received");
+  console.log("Start command received from:", ctx.from);
+
   try {
-    const webAppUrl = "https://telegram-coin-5gvtbb7i6-vladholomahs-projects.vercel.app";
-    await ctx.reply("🎮 Welcome to Coin App!", {
+    await ctx.reply("Testing bot response...");
+    console.log("Basic reply sent successfully");
+
+    const webAppUrl = "https://telegram-coin-app-git-master-vladholomahs-projects.vercel.app";
+
+    await ctx.reply("Welcome to Coin App! Click the button below to start:", {
       reply_markup: {
-        inline_keyboard: [
-          [{ text: "🚀 Launch App", web_app: { url: webAppUrl } }]
-        ]
+        inline_keyboard: [[
+          { text: "🚀 Launch App", web_app: { url: webAppUrl } }
+        ]]
       }
     });
-    console.log("Reply sent successfully");
+    console.log("Web app button sent successfully");
   } catch (error) {
     console.error("Error in start command:", error);
   }
 });
 
-bot.on("message", async (ctx) => {
-  console.log("Received message:", ctx.message);
-});
-
+// Додаємо обробник помилок
 bot.catch((err) => {
-  console.error("Bot error:", err);
+  const errorTime = new Date().toISOString();
+  console.error(`[${errorTime}] Bot error:`, err);
 });
 
 export default bot;

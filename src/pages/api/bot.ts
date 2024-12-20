@@ -1,10 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import bot from '../../bot/bot';
 
-// Створюємо секретний токен
-const secretToken = process.env.BOT_TOKEN?.split(':')[1] || '';
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Додаємо CORS заголовки
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
   // Для GET запитів повертаємо простий статус
   if (req.method === 'GET') {
     return res.status(200).json({ status: 'ok' });
@@ -22,7 +24,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   }
 
+  // Для OPTIONS запитів (CORS preflight)
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   // Для всіх інших методів
-  res.setHeader('Allow', ['GET', 'POST']);
+  res.setHeader('Allow', ['GET', 'POST', 'OPTIONS']);
   return res.status(405).json({ error: `Method ${req.method} not allowed` });
 }
